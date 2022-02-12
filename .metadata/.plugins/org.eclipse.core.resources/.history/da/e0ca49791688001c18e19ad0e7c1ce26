@@ -1,0 +1,7 @@
+package rcp;
+
+public class B_logic {
+	View view = new View();
+	
+
+}
