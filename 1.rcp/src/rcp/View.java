@@ -113,7 +113,7 @@ public class View extends ViewPart {
 	private void createShowBooksInuse(Composite parent, Font boldFont12) {
 		showBooksInuseButton = new Button(parent,SWT.PUSH);
 		showBooksInuseButton.setFont(boldFont12);
-		showBooksInuseButton.setText("Выданные книги читателю");
+		showBooksInuseButton.setText("Выданные книги читателю.");
 	}
 
 	private void createShowReaders(Composite parent, Font boldFont12) {

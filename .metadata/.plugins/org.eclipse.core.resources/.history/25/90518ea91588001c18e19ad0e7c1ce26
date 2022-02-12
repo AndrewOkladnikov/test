@@ -1,7 +1,0 @@
-source.. = src/
-output.. = bin/
-bin.includes = plugin.xml,\
-               META-INF/,\
-               .,\
-               c:\\Users\\postgresql-42.3.2.jar
-source.c:\\Users\\postgresql-42.3.2.jar = src/

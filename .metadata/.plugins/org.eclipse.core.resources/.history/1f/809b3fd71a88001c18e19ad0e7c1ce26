@@ -1,6 +1,0 @@
-output.. = bin/
-bin.includes = plugin.xml,\
-               META-INF/,\
-               OSGI-INF/l10n/bundle.properties,\
-               src/
-source.C:\\Users\\postgresql-42.3.2.jar = src/
