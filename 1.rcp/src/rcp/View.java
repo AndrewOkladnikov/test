@@ -125,7 +125,7 @@ public class View extends ViewPart {
 	private void createShouBooks(Composite parent, Font boldFont12) {
 		showBooksbutton = new Button(parent,SWT.PUSH);
 		showBooksbutton.setFont(boldFont12);
-		showBooksbutton.setText("Книги");
+		showBooksbutton.setText("Все книги");
 	}
 
 	private void createOutputTextField(Composite parent, Font boldFont12) {
