@@ -42,7 +42,7 @@ public class View extends ViewPart {
 	@Inject Display display;
 	@Override
 	public void createPartControl(Composite parent) {
-		Font boldFont16 = new Font( parent.getDisplay(), new FontData( "Arial", 16, SWT.BOLD ) );
+		Font boldFont16 = new Font( parent.getDisplay(), new FontData( "Arial", 14, SWT.BOLD ) );
 		Font boldFont12 = new Font( parent.getDisplay(), new FontData( "Arial", 12, SWT.BOLD ) );
 		GridLayout grid = new GridLayout(); 
 		grid.numColumns =2;
@@ -113,7 +113,7 @@ public class View extends ViewPart {
 	private void createShowBooksInuse(Composite parent, Font boldFont12) {
 		showBooksInuseButton = new Button(parent,SWT.PUSH);
 		showBooksInuseButton.setFont(boldFont12);
-		showBooksInuseButton.setText("Выданные книги читателю");
+		showBooksInuseButton.setText("Выданные книги");
 	}
 
 	private void createShowReaders(Composite parent, Font boldFont12) {
