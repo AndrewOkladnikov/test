@@ -8,12 +8,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 
 public class Connect implements MouseListener{
-	View v ;
-	Connect(View view){
-		v=view;
-	}
 	static Connection conn;
-	public void setConnection() {
+	public boolean setConnection() {
 		try{
 		    Class.forName("org.postgresql.Driver");
 		    } catch (ClassNotFoundException cnfe){
@@ -23,10 +19,11 @@ public class Connect implements MouseListener{
 		String url = "jdbc:postgresql://localhost:5432/test_db?user=postgres&password=1510kirs"; 
 		try {
 			conn = DriverManager.getConnection(url);
-			v.databaseConnectionInfoLabel.setText("Соединение прошло успешно!");
+			return true;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			System.out.println(e1.getMessage());
+			return false;
 		}
 	}
 	@Override

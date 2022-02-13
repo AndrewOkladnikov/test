@@ -24,6 +24,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
@@ -31,69 +34,80 @@ import org.eclipse.ui.part.ViewPart;
 
 public class View extends ViewPart {
 	public static final String ID = "1_.view";
-	public Button execute,Conbt,showBooksbutton,showReadersbutton,showBooksInuseButton,deleteButton,addButton ;
+	public Button RenameBut,Conbt,showBooksBut,showReadersBut,showBooksInuseBut,deleteBut,addBut,AddTakenBookBut ;
 	public Label databaseConnectionInfoLabel;
 	Combo dropListcombo;
-	Text intext,outtext;
+	Text outtext;
 	Font font1,font;
 	Repository repository = new Repository(this);
-	Connect connect = new Connect(this);
+	Connect connect = new Connect();
 	@Inject IWorkbench workbench;
 	@Inject Display display;
 	@Override
 	public void createPartControl(Composite parent) {
 		Font boldFont16 = new Font( parent.getDisplay(), new FontData( "Arial", 16, SWT.BOLD ) );
 		Font boldFont12 = new Font( parent.getDisplay(), new FontData( "Arial", 12, SWT.BOLD ) );
-		GridLayout grid = new GridLayout(); 
-		grid.numColumns =2;
+		GridLayout grid = new GridLayout(5,true); 
 		parent.setLayout(grid);
 		
-		//execute = new Button(parent, SWT.PUSH);
-		//execute.setFont(boldFont16);
-		//execute.setText("Выполнить");
-		
-		//createInputTextField(parent, boldFont12);
-		
-		//
+		createRenameBut(parent, boldFont16);
 		
 		createOutputTextField(parent, boldFont12);
 		
-		createShouBooks(parent, boldFont12);
+		createShowBooksBut(parent, boldFont12);
 		
-		createShowReaders(parent, boldFont12);
+		createShowReadersBut(parent, boldFont12);
 		
-		createShowBooksInuse(parent, boldFont12);
+		createShowBooksInuseBut(parent, boldFont12);
 		
-		createAddButton(parent, boldFont12);
+		createAddBut(parent, boldFont12);
 		
-		createDeleteButton(parent, boldFont12);
+		createDeleteBut(parent, boldFont12);
+		
+		//createAddTakenBookBut(parent,boldFont16);
 		
 		createDropList(parent, boldFont12);
-		//createInputTextField(parent, boldFont12);
-//		Conbt = new Button(parent,SWT.PUSH|SWT.CENTER);
-//		Conbt.setFont(boldFont12);
-//		Conbt.setText("Соединиться с БД");
 		
 		createStateConnectionLabel(parent, boldFont12);
-		/*/Здесь все события на нажатия кнопок*/
-		connect.setConnection();
-		showBooksbutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> repository.getrequestBooks()));//12222222
-		showReadersbutton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> repository.getrequestReaders()));
-		showBooksInuseButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> repository.getrequestInuse()));
-		addButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> repository.addRecord(dropListcombo.getText())));
-		//intext.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> intext.setRedraw(true)));
-		//execute.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> repository.getrequest()));
-
+		
+		var isSuccessfulConnection = connect.setConnection();
+		if (isSuccessfulConnection)
+		{
+			databaseConnectionInfoLabel.setText("Соединение прошло успешно!");
+		}
+		else
+		{
+			databaseConnectionInfoLabel.setText("Не удалось установить соединение с базой.");
+		}
+		showBooksBut.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> repository.getrequestBooks()));
+		showReadersBut.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> repository.getrequestReaders()));
+		showBooksInuseBut.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> repository.getrequestInuse()));
+		addBut.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> repository.addRecord(dropListcombo.getText())));
+		RenameBut.addSelectionListener(SelectionListener.widgetSelectedAdapter(e-> repository.renameRecord(dropListcombo.getText())));
+		//AddTakenBookBut.addSelectionListener(null);
 	}
-	private void createAddButton(Composite parent, Font boldFont12) {
-		addButton = new Button(parent,SWT.PUSH);
-		addButton.setFont(boldFont12);
-		addButton.setText("Новая запись");
+	private void createAddTakenBookBut(Composite parent, Font boldFont16) {
+		AddTakenBookBut = new Button(parent, SWT.PUSH);
+		AddTakenBookBut.setFont(boldFont16);
+		AddTakenBookBut.setText("Обновить");
 	}
-	private void createDeleteButton(Composite parent, Font boldFont12) {
-		deleteButton = new Button(parent,SWT.PUSH);
-		deleteButton.setFont(boldFont12);
-		deleteButton.setText("Удалить запись");
+	
+	private void createRenameBut(Composite parent, Font boldFont16) {
+		RenameBut = new Button(parent, SWT.PUSH);
+		RenameBut.setFont(boldFont16);
+		RenameBut.setText("Обновить");
+	}
+	private void createAddBut(Composite parent, Font boldFont12) {
+		addBut = new Button(parent,SWT.PUSH);
+		addBut.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true));
+		addBut.setFont(boldFont12);
+		addBut.setText("Новая запись");
+	}
+	private void createDeleteBut(Composite parent, Font boldFont12) {
+		deleteBut = new Button(parent,SWT.PUSH);
+		deleteBut.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true));
+		deleteBut.setFont(boldFont12);
+		deleteBut.setText("Удалить запись");
 	}
 
 	private void createDropList(Composite parent, Font boldFont12) {
@@ -105,41 +119,44 @@ public class View extends ViewPart {
 	}
 
 	private void createStateConnectionLabel(Composite parent, Font boldFont12) {
-		databaseConnectionInfoLabel = new Label(parent, SWT.CENTER|SWT.FILL);
-		databaseConnectionInfoLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		databaseConnectionInfoLabel = new Label(parent, SWT.CENTER);
+		databaseConnectionInfoLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true,4,1));
 		databaseConnectionInfoLabel.setFont(boldFont12);
 	}
 
-	private void createShowBooksInuse(Composite parent, Font boldFont12) {
-		showBooksInuseButton = new Button(parent,SWT.PUSH);
-		showBooksInuseButton.setFont(boldFont12);
-		showBooksInuseButton.setText("Выданные книги читателю");
+	private void createShowBooksInuseBut(Composite parent, Font boldFont12) {
+		showBooksInuseBut = new Button(parent,SWT.PUSH);
+		showBooksInuseBut.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true));
+		showBooksInuseBut.setFont(boldFont12);
+		showBooksInuseBut.setText("Выданные книги читателю");
 	}
 
-	private void createShowReaders(Composite parent, Font boldFont12) {
-		showReadersbutton = new Button(parent,SWT.PUSH);
-		showReadersbutton.setFont(boldFont12);
-		showReadersbutton.setText("Читатели");
+	private void createShowReadersBut(Composite parent, Font boldFont12) {
+		showReadersBut = new Button(parent,SWT.PUSH);
+		showReadersBut.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true));
+		showReadersBut.setFont(boldFont12);
+		showReadersBut.setText("Читатели");
 	}
 
-	private void createShouBooks(Composite parent, Font boldFont12) {
-		showBooksbutton = new Button(parent,SWT.PUSH);
-		showBooksbutton.setFont(boldFont12);
-		showBooksbutton.setText("Книги");
+	private void createShowBooksBut(Composite parent, Font boldFont12) {
+		showBooksBut = new Button(parent,SWT.PUSH);
+		showBooksBut.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true));
+		showBooksBut.setFont(boldFont12);
+		showBooksBut.setText("Книги");
 	}
 
 	private void createOutputTextField(Composite parent, Font boldFont12) {
 		outtext = new Text(parent, SWT.MULTI | SWT.BORDER  | SWT.V_SCROLL | SWT.CENTER  );        
-		outtext.setLayoutData(new GridData(GridData.FILL_BOTH));
+		outtext.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,2,3));
 		outtext.setFont(boldFont12);
 	}
 
-	private void createInputTextField(Composite parent, Font boldFont12) {
-		intext = new Text( parent, SWT.MULTI|SWT.WRAP);            
-		intext.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		intext.setFont(boldFont12);
-		intext.setLocation(100, 100);
-	}
+//	private void createInputTextField(Composite parent, Font boldFont12) {
+//		intext = new Text( parent, SWT.MULTI|SWT.WRAP);            
+//		intext.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+//		intext.setFont(boldFont12);
+//		intext.setLocation(100, 100);
+//	}
 
 	@Override
 	public void setFocus() {
@@ -168,4 +185,6 @@ public class View extends ViewPart {
         }
         //display.dispose();
 		}
+	
+	
 	}
